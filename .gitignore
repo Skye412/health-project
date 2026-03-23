@@ -1,0 +1,8 @@
+# 后端忽略
+x-admin/target/
+x-admin/*.iml
+x-admin/.idea/
+
+# 前端忽略
+x-admin-web/node_modules/
+x-admin-web/dist/
