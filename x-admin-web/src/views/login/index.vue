@@ -1,15 +1,23 @@
 <template>
   <div class="login-container">
+    <div class="color-shape shape-1"></div>
+    <div class="color-shape shape-2"></div>
+    <div class="color-shape shape-3"></div>
+
     <el-form
       ref="loginForm"
       :model="loginForm"
       :rules="loginRules"
-      class="login-form"
+      class="login-form glass-card"
       auto-complete="on"
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">欢迎使用个人健康管理系统</h3>
+        <div class="logo-box">
+          <i class="el-icon-first-aid-kit"></i>
+        </div>
+        <h3 class="title">健康管理系统</h3>
+        <p class="subtitle">Welcome Back</p>
       </div>
 
       <el-form-item prop="username">
@@ -19,7 +27,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="用户名"
+          placeholder="请输入用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -36,33 +44,30 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="密码"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon
-            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-          />
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width: 100%; margin-bottom: 30px"
-        @click.native.prevent="handleLogin"
-        >登 陆</el-button
-      >
-      <div>
+      <div class="action-container">
         <el-button
+          :loading="loading"
           type="primary"
-          style="width: 100%; margin-bottom: 30px; margin-left: 0px"
-          @click.native.prevent="handleRegister"
-          >注 册</el-button
+          class="login-btn glow-btn"
+          @click.native.prevent="handleLogin"
         >
+          登 录
+        </el-button>
+        <div class="register-link">
+          还没有账号？ 
+          <el-link type="primary" :underline="false" @click="handleRegister">立即注册</el-link>
+        </div>
       </div>
     </el-form>
   </div>
@@ -74,52 +79,34 @@ import { validUsername } from "@/utils/validate";
 export default {
   name: "Login",
   data() {
-    // 定义验证用户名函数
     const validateUsername = (rule, value, callback) => {
-      // 调用 validUsername 函数判断用户名是否合法
       if (!validUsername(value)) {
-        // 如果不合法则返回错误信息
         callback(new Error("请输入正确的用户名"));
       } else {
-        // 合法则调用 callback() 函数返回验证成功信息
         callback();
       }
     };
-    // 定义验证密码函数
     const validatePassword = (rule, value, callback) => {
-      // 判断密码是否小于6位
       if (value.length < 6) {
-        // 如果小于6位则返回错误信息
         callback(new Error("输入的密码不能少于6位"));
       } else {
-        // 合法则调用 callback() 函数返回验证成功信息
         callback();
       }
     };
     return {
-      // 定义表单数据对象
       loginForm: {
         username: "",
         password: "",
       },
-      // 定义表单验证规则
       loginRules: {
-        username: [
-          { required: true, trigger: "blur", validator: validateUsername },
-        ],
-        password: [
-          { required: true, trigger: "blur", validator: validatePassword },
-        ],
+        username: [{ required: true, trigger: "blur", validator: validateUsername }],
+        password: [{ required: true, trigger: "blur", validator: validatePassword }],
       },
-      // 定义 loading 状态
       loading: false,
-      // 定义密码输入框类型，初始为密码框
       passwordType: "password",
-      // 定义重定向路径，初始为 undefined
       redirect: undefined,
     };
   },
-
   watch: {
     $route: {
       handler: function (route) {
@@ -128,9 +115,7 @@ export default {
       immediate: true,
     },
   },
-
   methods: {
-    
     showPwd() {
       if (this.passwordType === "password") {
         this.passwordType = "";
@@ -141,28 +126,25 @@ export default {
         this.$refs.password.focus();
       });
     },
-
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.loading = true; // 显示 loading 状态圈
+          this.loading = true;
           this.$store
             .dispatch("user/login", this.loginForm)
             .then(() => {
-              // 登录成功，跳转到目标路由
               this.$router.push({ path: this.redirect || "/" });
-              this.loading = false; // 隐藏 loading 状态
+              this.loading = false;
             })
             .catch(() => {
-              this.loading = false; // 隐藏 loading 状态
+              this.loading = false;
             });
         } else {
           console.log("error submit!!");
-          return false; 
+          return false;
         }
       });
     },
-
     handleRegister() {
       this.$router.push({ path: "/register" });
     },
@@ -170,105 +152,183 @@ export default {
 };
 </script>
 
-<style lang="scss">
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
-
+<style lang="scss" scoped>
 .login-container {
   min-height: 100vh;
   width: 100%;
-  background-color: $bg;
+  background-color: #eef2f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.alicdn.com%2Fimgextra%2Fi4%2F2073126104%2FTB2bOUZjq8lpuFjy0FpXXaGrpXa_%21%212073126104.jpg&refer=http%3A%2F%2Fimg.alicdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1683790222&t=8849124f26235d171450ed628e255b90");
+  position: relative;
+  overflow: hidden;
 
-  .login-form {
-    position: relative;
-    width: 520px;
-    max-width: 100%;
-    padding: 80px 35px 0;
-    margin: 0 auto;
-    overflow: hidden;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+  /* 背景装饰光斑 */
+  .color-shape {
+    position: absolute;
+    filter: blur(90px);
+    border-radius: 50%;
+    z-index: 0;
+    animation: float 10s ease-in-out infinite alternate;
+  }
+  .shape-1 {
+    width: 500px; height: 500px;
+    background: rgba(64, 158, 255, 0.4);
+    top: -100px; left: -100px;
+  }
+  .shape-2 {
+    width: 400px; height: 400px;
+    background: rgba(103, 194, 58, 0.3);
+    bottom: -50px; right: -50px;
+    animation-delay: -5s;
+  }
+  .shape-3 {
+    width: 300px; height: 300px;
+    background: rgba(230, 162, 60, 0.2);
+    top: 40%; left: 60%;
+    animation-duration: 15s;
   }
 
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 50px) scale(1.1); }
+  }
 
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
+  /* 毛玻璃表单卡片 */
+  .glass-card {
+    position: relative;
+    z-index: 1;
+    width: 420px;
+    max-width: 90%;
+    padding: 45px 40px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-container {
+    text-align: center;
+    margin-bottom: 35px;
+
+    .logo-box {
+      width: 60px; height: 60px;
+      margin: 0 auto 15px;
+      background: linear-gradient(135deg, #409EFF, #53a8ff);
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(64, 158, 255, 0.3);
+      
+      i { font-size: 32px; color: #fff; }
+    }
+
+    .title {
+      font-size: 24px;
+      color: #303133;
+      margin: 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #909399;
+      margin-top: 8px;
     }
   }
 
   .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    padding: 0 10px;
+    color: #909399;
     vertical-align: middle;
-    width: 30px;
+    width: 35px;
     display: inline-block;
-  }
-
-  .title-container {
-    position: relative;
-
-    .title {
-      font-size: 26px;
-      color: $dark_gray;
-      margin: 0px auto 40px auto;
-      text-align: center;
-      font-weight: bold;
-    }
   }
 
   .show-pwd {
     position: absolute;
-    right: 10px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 16px;
-    color: $dark_gray;
+    color: #909399;
     cursor: pointer;
-    user-select: none;
+    transition: color 0.3s;
+    &:hover { color: #409EFF; }
   }
 
-  .el-form-item {
-    margin-bottom: 20px;
+  ::v-deep .el-form-item {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+    
+    &:hover, &:focus-within {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #409EFF;
+      box-shadow: 0 0 10px rgba(64, 158, 255, 0.1);
+    }
+    &.is-error { border-color: #F56C6C; }
   }
 
-  .el-input {
-    width: 100%;
-    border: none;
-    border-radius: 5px;
-    background-color: #f7f7f7;
+  ::v-deep .el-input {
+    display: inline-block;
+    height: 48px;
+    width: 85%;
 
     input {
-      padding: 15px;
-      color: $dark_gray;
+      background: transparent;
+      border: 0px;
+      -webkit-appearance: none;
+      border-radius: 0px;
+      padding: 12px 5px 12px 15px;
+      color: #303133;
+      height: 48px;
+      font-size: 15px;
 
-      &::placeholder {
-        color: #ccc;
+      &:-webkit-autofill {
+        box-shadow: 0 0 0px 1000px transparent inset !important;
+        transition: background-color 5000s ease-in-out 0s;
       }
     }
   }
 
-  .el-button {
-    height: 50px;
-    border-radius: 25px;
-    font-size: 16px;
-    background-color: $dark_gray;
-    border: none;
+  .action-container {
+    margin-top: 35px;
+    
+    .glow-btn {
+      width: 100%;
+      height: 50px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #409EFF, #3a8ee6);
+      border: none;
+      box-shadow: 0 6px 20px rgba(64, 158, 255, 0.4);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(64, 158, 255, 0.5);
+      }
+    }
 
-    &:hover,
-    &:focus {
-      background-color: darken($dark_gray, 10%);
+    .register-link {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 14px;
+      color: #606266;
     }
   }
 }
