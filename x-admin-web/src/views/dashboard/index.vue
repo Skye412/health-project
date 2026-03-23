@@ -1,89 +1,97 @@
 <template>
-  <el-row class="row-bg" :gutter="20">
-    <div>
+  <div class="dashboard-container">
+    <el-row :gutter="20" class="stat-row">
       <el-col :span="6">
-        <div class="grid-content bg-purple-dark">
-          <div class="col1">
-            <div class="col6">身高</div>
-            <div class="col6zhi">
-              {{ this.bodyInfo.height }}<span class="unit">/m</span>
+        <el-card shadow="hover" class="stat-card">
+          <div class="card-body">
+            <div class="card-info">
+              <div class="card-label">身高</div>
+              <div class="card-value">
+                {{ bodyInfo.height || '--' }}<span class="card-unit">m</span>
+              </div>
+            </div>
+            <div class="card-icon-wrapper" style="background-color: #e6f7ff;">
+              <i class="el-icon-user-solid" style="color: #409EFF;"></i>
             </div>
           </div>
-          <div>
-            <i class="el-icon-user-solid" style="font-size: 80px"></i>
-          </div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="6">
-        <div class="grid-content bg-purple-dark">
-          <div class="col1">
-            <div class="col6">体重</div>
-            <div class="col6zhi">
-              {{ this.bodyInfo.weight }}<span class="unit">/kg</span>
+        <el-card shadow="hover" class="stat-card">
+          <div class="card-body">
+            <div class="card-info">
+              <div class="card-label">体重</div>
+              <div class="card-value">
+                {{ bodyInfo.weight || '--' }}<span class="card-unit">kg</span>
+              </div>
+            </div>
+            <div class="card-icon-wrapper" style="background-color: #f6ffed;">
+              <i class="el-icon-odometer" style="color: #67C23A;"></i>
             </div>
           </div>
-          <div>
-            <i class="el-icon-odometer" style="font-size: 80px"></i>
-          </div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="6">
-        <div class="grid-content bg-purple-dark">
-          <div class="col1">
-            <div class="col6">BMI</div>
-            <div class="col6zhi">{{ this.bmi }}<span class="unit"></span></div>
-          </div>
-          <div>
-            <i class="el-icon-date" style="font-size: 80px"></i>
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content bg-purple-dark">
-          <div class="col1">
-            <div class="col6">年龄</div>
-            <div class="col6zhi" style="text-align: center; font-size: 30px">
-              {{ this.bodyInfo.age }}<span class="unit"></span>
+        <el-card shadow="hover" class="stat-card">
+          <div class="card-body">
+            <div class="card-info">
+              <div class="card-label">BMI 指数</div>
+              <div class="card-value">{{ bmi || '--' }}</div>
+            </div>
+            <div class="card-icon-wrapper" style="background-color: #fffb8f;">
+              <i class="el-icon-date" style="color: #E6A23C;"></i>
             </div>
           </div>
-          <div>
-            <i class="el-icon-s-data" style="font-size: 80px"></i>
-          </div>
-        </div>
+        </el-card>
       </el-col>
-    </div>
+      <el-col :span="6">
+        <el-card shadow="hover" class="stat-card">
+          <div class="card-body">
+            <div class="card-info">
+              <div class="card-label">年龄</div>
+              <div class="card-value">
+                {{ bodyInfo.age || '--' }}<span class="card-unit">岁</span>
+              </div>
+            </div>
+            <div class="card-icon-wrapper" style="background-color: #fff1f0;">
+              <i class="el-icon-s-data" style="color: #F56C6C;"></i>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
 
-    <div class="div2">
-      <div class="box1 box">
-        <div class="box1 box" ref="myChart"></div>
-      </div>
-
-      <div class="box2 box">
-        <div id="chart-container" style="width: 100%; height: 100%"></div>
-      </div>
-
-      <div class="box3 box">
-        <div id="chart-containerLine" style="width: 100%; height: 100%"></div>
-      </div>
-    </div>
-  </el-row>
+    <el-row :gutter="20" class="chart-section">
+      <el-col :span="8">
+        <el-card shadow="never">
+          <div ref="myChart" style="height: 380px; width: 100%"></div>
+        </el-card>
+      </el-col>
+      <el-col :span="8">
+        <el-card shadow="never">
+          <div id="chart-container" style="height: 380px; width: 100%"></div>
+        </el-card>
+      </el-col>
+      <el-col :span="8">
+        <el-card shadow="never">
+          <div id="chart-containerLine" style="height: 380px; width: 100%"></div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
-
-
 
 <script>
 import * as echarts from "echarts";
-
 import userApi from "@/api/userManage";
 import FunctionApi from "@/api/Function_Menu";
+
 export default {
   data() {
     return {
-      charts: "",
-      bodyInfo: "",
+      bodyInfo: {},
       bmi: null,
-      score: null,
-      BodyNotesInfo: "",
+      BodyNotesInfo: [],
 
       vision: [],
       waterConsumption: [],
@@ -94,30 +102,30 @@ export default {
     };
   },
   methods: {
+    // 原汁原味的数据请求
     async getBodyInfo() {
       try {
-        // 使用解构赋值从 userApi.getBodyInfo() 返回的 Promise 对象中提取 data.bodyList 数组的第一个元素（即 bodyInfo 对象）
-        const {
-          data: {
-            bodyList: [bodyInfo],
-          },
-        } = await userApi.getBodyInfo();
-        this.bodyInfo = bodyInfo;
+        const { data: { bodyList: [bodyInfo] } } = await userApi.getBodyInfo();
+        this.bodyInfo = bodyInfo || {};
       } catch (error) {
-        console.log("获取身体信息错误");
+        console.error("获取身体信息错误", error);
       }
     },
 
-
     async getBodyNotes() {
       try {
-  
+        if (!this.bodyInfo.id) return;
         const response = await FunctionApi.getBodyNotes(this.bodyInfo.id);
+        this.BodyNotesInfo = response.data || [];
 
-        // 从返回结果中获取 BodyNotesInfo，并赋值给组件的 BodyNotesInfo 属性
-        this.BodyNotesInfo = response.data;
+        // 清空数组防止重复追加
+        this.vision = [];
+        this.waterConsumption = [];
+        this.bloodSugar = [];
+        this.bloodPressure = [];
+        this.heartRate = [];
+        this.date = [];
 
-        // 遍历 BodyNotesInfo 数组中的每一个元素，将其各个属性值分别添加到对应的数组中,note包含每一条数据的对象
         this.BodyNotesInfo.forEach((note) => {
           this.vision.push(note.vision);
           this.waterConsumption.push(note.waterConsumption);
@@ -132,320 +140,162 @@ export default {
           this.date.push(formattedDate);
         });
       } catch (error) {
-        console.log("获取身体信息错误");
+        console.error("获取身体趋势信息错误", error);
       }
     },
 
     bmiM() {
-      // 从bodyInfo中获取身高和体重的值，并转换为 Number 类型
-      const weight = Number(this.bodyInfo.weight);
-      // 计算BMI值
-      const bmiValue = weight / (this.bodyInfo.height * this.bodyInfo.height);
-      // 返回计算结果并保留两位小数
-      this.bmi = bmiValue.toFixed(2);
-      return bmiValue.toFixed(2);
+      if (this.bodyInfo.weight && this.bodyInfo.height) {
+        const weight = Number(this.bodyInfo.weight);
+        const bmiValue = weight / (this.bodyInfo.height * this.bodyInfo.height);
+        this.bmi = bmiValue.toFixed(2);
+      }
     },
 
+    // 视力柱状图
     BarChart() {
       const chartDom = document.getElementById("chart-container");
+      if (!chartDom) return;
       const myChart = echarts.init(chartDom);
-
       const option = {
         color: ["#3398DB"],
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow",
-          },
-        },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true,
-        },
-        title: {
-          text: "视力变化趋势图",
-          textStyle: {
-            fontWeight: "normal",
-            fontSize: 25,
-            color: "#666",
-          },
-          left: "center",
-          top: 20,
-          padding: [10, 10, 0, 10],
-        },
-        xAxis: [
-          {
-            type: "category",
-            data: this.date,
-            axisTick: {
-              alignWithLabel: true,
-            },
-            axisLabel: {
-              interval: 1, //设置X轴文字显示间隔
-              rotate: 45, //设置X轴文字旋转角度
-              textStyle: {
-                fontSize: 12, //设置X轴文字样式
-              },
-            },
-          },
-        ],
-        yAxis: [
-          {
-            type: "value",
-            axisLabel: {
-              textStyle: {
-                fontSize: 12, //设置Y轴文字样式
-              },
-            },
-          },
-        ],
-        series: [
-          {
-            name: "视力",
-            type: "bar",
-            barWidth: "60%",
-            data: this.vision,
-            itemStyle: {
-              // 阴影的大小
-              shadowBlur: 5,
-              // 阴影水平方向上的偏移
-              shadowOffsetX: 2,
-              // 阴影垂直方向上的偏移
-              shadowOffsetY: 2,
-              // 阴影颜色
-              shadowColor: "rgba(0, 0, 0, 0.5)",
-              // 柱状图圆角，初始化效果
-              barBorderRadius: 5,
-            },
-          },
-        ],
+        tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+        grid: { left: "3%", right: "4%", bottom: "3%", containLabel: true },
+        title: { text: "视力变化趋势图", textStyle: { fontWeight: "normal", fontSize: 20, color: "#333" }, left: "center", top: 10 },
+        xAxis: [{ type: "category", data: this.date, axisTick: { alignWithLabel: true }, axisLabel: { interval: 1, rotate: 45 } }],
+        yAxis: [{ type: "value" }],
+        series: [{
+          name: "视力", type: "bar", barWidth: "50%", data: this.vision,
+          itemStyle: { barBorderRadius: 4 }
+        }],
       };
-
       myChart.setOption(option);
     },
+
+    // 血压血糖折线图
     area() {
       const chartDom = document.getElementById("chart-containerLine");
+      if (!chartDom) return;
       const myChart = echarts.init(chartDom);
-
       const option = {
-        title: {
-          text: "血压血糖变化趋势图",
-          textStyle: {
-            fontWeight: "normal",
-            fontSize: 25,
-            color: "#666",
-          },
-          left: "center",
-          top: 20,
-          padding: [10, 10, 0, 10],
-        },
-        tooltip: {
-          trigger: "axis",
-        },
-        legend: {
-          data: ["血压", "血糖"],
-        },
-        xAxis: {
-          type: "category",
-          data: this.date,
-          axisLabel: {
-            interval: 1, //设置X轴文字显示间隔
-            textStyle: {
-              fontSize: 12, //设置X轴文字样式
-            },
-          },
-        },
-        yAxis: {
-          type: "value",
-        },
+        title: { text: "血压血糖变化", textStyle: { fontWeight: "normal", fontSize: 20, color: "#333" }, left: "center", top: 10 },
+        tooltip: { trigger: "axis" },
+        legend: { data: ["血压", "血糖"], top: 40 },
+        grid: { left: "5%", right: "5%", bottom: "5%", containLabel: true },
+        xAxis: { type: "category", data: this.date, axisLabel: { interval: 1 } },
+        yAxis: { type: "value" },
         series: [
-          {
-            name: "血压",
-            data: this.bloodPressure,
-            type: "line",
-          },
-          {
-            name: "血糖",
-            data: this.bloodSugar,
-            type: "line",
-          },
+          { name: "血压", data: this.bloodPressure, type: "line", smooth: true },
+          { name: "血糖", data: this.bloodSugar, type: "line", smooth: true },
         ],
       };
-
       myChart.setOption(option);
     },
+
+    // 心率趋势图 (从你的 Watcher 里提出来的)
+    heartRateChart() {
+      const chartDom = this.$refs.myChart;
+      if (!chartDom) return;
+      const myChart = echarts.init(chartDom);
+      const option = {
+        title: { text: "心率变化趋势图", textStyle: { fontWeight: "normal", fontSize: 20, color: "#333" }, left: "center", top: 10 },
+        tooltip: { trigger: "axis", formatter: function(params) { return params[0].name + "：" + params[0].value; } },
+        grid: { left: "5%", right: "5%", bottom: "5%", containLabel: true },
+        xAxis: { type: "category", data: this.date, axisLabel: { interval: 2 }, axisTick: { show: false } },
+        yAxis: { type: "value", axisLine: { show: false }, splitLine: { lineStyle: { type: "dashed", color: "#eee" } }, axisTick: { show: false } },
+        series: [{
+          data: this.heartRate, type: "line", smooth: true,
+          lineStyle: { width: 3, color: "#00bfff" },
+          symbol: "circle", symbolSize: 8,
+          itemStyle: { color: "#00bfff", borderColor: "#fff", borderWidth: 2 },
+          markLine: { data: [{ type: "average", name: "平均值" }], lineStyle: { type: "dashed", color: "green", width: 2 }, symbol: "none" }
+        }],
+      };
+      myChart.setOption(option);
+    }
   },
 
+  // 原汁原味的 Watcher，保证数据获取顺序
   watch: {
     bodyInfo: {
-      deep: true, //监听对象内部属性的变化
+      deep: true,
       async handler() {
-        this.bmiM(); // 计算BMI值
-        await this.getBodyNotes(); // 获取身体数据信息
-        this.BarChart();
-        this.area();
-        const chartDom = this.$refs.myChart;
-        const myChart = echarts.init(chartDom);
-
-        const option = {
-          title: {
-            text: "心率变化趋势图",
-            textStyle: {
-              fontWeight: "normal",
-              fontSize: 25,
-              color: "#666",
-            },
-            left: "center",
-            top: 20,
-          },
-          xAxis: {
-            type: "category",
-            data: this.date,
-            axisLabel: {
-              fontSize: 12,
-              interval: 2,
-            },
-            axisTick: {
-              show: false,
-            },
-          },
-          yAxis: {
-            type: "value",
-            axisLine: {
-              show: false,
-            },
-            splitLine: {
-              lineStyle: {
-                type: "dashed",
-                color: "#ddd",
-              },
-            },
-            axisTick: {
-              show: false,
-            },
-          },
-          tooltip: {
-            trigger: "axis",
-            formatter: function (params) {
-              return params[0].name + "：" + params[0].value;
-            },
-          },
-          series: [
-            {
-              data: this.heartRate,
-              type: "line",
-              smooth: true,
-              lineStyle: {
-                width: 3,
-                color: "#00bfff",
-              },
-              symbol: "circle",
-              symbolSize: 8,
-              itemStyle: {
-                color: "#00bfff",
-                borderColor: "#fff",
-                borderWidth: 2,
-              },
-              markLine: {
-                data: [
-                  {
-                    type: "average",
-                    name: "平均值",
-                  },
-                ],
-                label: {
-                  position: "insideEndBottom",
-                  formatter: "{b}：{c}",
-                },
-                lineStyle: {
-                  type: "dashed",
-                  color: "green",
-                  width: 2,
-                },
-                symbol: "none",
-              },
-              animation: true,
-              animationDuration: 3000,
-              animationEasing: "cubicInOut",
-            },
-          ],
-        };
-
-        myChart.setOption(option);
+        this.bmiM(); 
+        await this.getBodyNotes(); 
+        // 确保 DOM 渲染完后再初始化图表
+        this.$nextTick(() => {
+          this.BarChart();
+          this.area();
+          this.heartRateChart();
+        });
       },
     },
   },
 
   created() {
     this.getBodyInfo();
-  },
-
-  async mounted() {},
+  }
 };
 </script>
-<style scoped>
-.bg-purple-dark {
-  background: #ffffff;
-  box-shadow: 0px 0px 1px #000000;
-}
 
-.unit {
-  font-size: 20px;
-  font-weight: normal;
-  margin-left: 5px;
-  color: #555;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 130px; /* increase the height for better visibility */
-  display: flex; /* center content horizontally and vertically */
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 添加四边阴影 */
-}
+<style lang="scss" scoped>
+.dashboard-container {
+  padding: 24px;
+  background-color: #f0f2f5; 
+  min-height: calc(100vh - 84px);
 
-.row-bg {
-  padding: 10px;
-  background-color: #f9fafc;
-}
-.div2 {
-  margin-top: 15%;
-  height: 500px;
-  width: 100%;
-  background-color: #555;
-  display: flex;
-  flex-direction: row;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 添加四边阴影 */
-}
+  /* 顶部 4 个小卡片样式 */
+  .stat-row {
+    margin-bottom: 24px;
+    
+    .stat-card {
+      border-radius: 12px;
+      border: none;
+      transition: all 0.3s ease;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+      }
+    }
 
-.box {
-  height: 100%;
-  width: 100%;
-  flex-grow: 1;
-  background: #ffffff;
-  box-shadow: 0px 0px 1px #000000;
-}
-.col6 {
-  font-size: 26px;
-  font-weight: bold;
-  color: #313131;
-  text-align: right;
-  padding-right: 10px;
-  margin-top: -30px;
-}
+    .card-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-label {
+      font-size: 14px;
+      color: #909399;
+      margin-bottom: 10px;
+    }
+    .card-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #303133;
+    }
+    .card-unit {
+      font-size: 14px;
+      font-weight: normal;
+      margin-left: 4px;
+      color: #606266;
+    }
+    .card-icon-wrapper {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      i { font-size: 28px; }
+    }
+  }
 
-.col6zhi {
-  font-size: 20px;
-  font-weight: bold;
-  color: #746c6c;
-  padding-top: 30px;
-}
-
-.col1 {
-  margin-right: -80%;
-  padding-top: 20px;
+  /* 下方 3 个图表区域样式 */
+  .chart-section {
+    ::v-deep .el-card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+  }
 }
 </style>
