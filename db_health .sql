@@ -167,14 +167,14 @@ insert  into `j_menu`(`menu_id`,`component`,`path`,`redirect`,`name`,`title`,`ic
 (1,'Layout','/sys','/sys/user','sysManage','系统管理','el-icon-s-order\r\n',0,'N',0),
 (2,'sys/user','user',NULL,'userList','用户管理','user',1,'Y',0),
 (3,'sys/role','role',NULL,'roleList','角色管理','el-icon-user',1,'Y',0),
-(4,'Layout','/test','/test/test1','test','系统功能','form',0,'N',0),
-(5,'test/test1','test1','','test1','身体信息上传','form',4,'Y',0),
-(6,'test/test2','test2','','test2','健康评估','el-icon-first-aid-kit',4,'Y',0),
-(7,'test/test3','test3','','test3','运动知识','el-icon-s-opportunity\r\n',4,'Y',0),
+(4,'Layout','/health','/health/info-upload','health','健康服务','form',0,'N',0),
+(5,'test/test1','info-upload','','infoUpload','身体信息上传','form',4,'Y',0),
+(6,'test/test2','assessment','','assessment','健康评估','el-icon-first-aid-kit',4,'Y',0),
+(7,'test/test3','sports-knowledge','','sportsKnowledge','运动知识','el-icon-s-opportunity\r\n',4,'Y',0),
 (8,'sys/sportDetails','sportDetails','','sportDetails','运动知识管理','el-icon-s-opportunity\r\nel-icon-s-custom',1,'Y',0),
 (9,'sys/DetailsManage','DetailsManage',NULL,'DetailsManage','运动详情管理','el-icon-s-check',1,'Y',0),
 (10,'sys/userBodyManage','userBodyManage',NULL,'userBodyManage','用户身体信息管理','el-icon-s-check',1,'Y',0),
-(11,'test/bodyManage','bodyManage',NULL,'bodyManage','身体信息管理','el-icon-s-check',4,'Y',0);
+(11,'test/bodyManage','body-manage',NULL,'bodyManage','身体信息管理','el-icon-s-check',4,'Y',0);
 
 /*Table structure for table `j_role` */
 
