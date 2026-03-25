@@ -224,3 +224,61 @@
     }
   }
 }
+
+// --- 追加：侧边栏现代胶囊样式美化 ---
+
+.sidebar-container {
+  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05); // 给整个侧边栏右侧加一条淡淡的投影
+  z-index: 1001;
+}
+
+// 菜单项圆角与间距
+.el-menu-item, .el-submenu__title {
+  margin: 4px 10px;
+  border-radius: 8px;
+  height: 48px;
+  line-height: 48px;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  
+  // 图标颜色弱化
+  .svg-icon {
+    margin-right: 12px;
+    color: #909399;
+  }
+}
+
+// 悬停效果
+.el-menu-item:hover, .el-submenu__title:hover {
+  background-color: #f5f7fa !important;
+  color: #409EFF !important;
+  
+  .svg-icon { color: #409EFF; }
+}
+
+// 选中状态效果（高能预警：非常好看的渐变+左侧竖线）
+.el-menu-item.is-active {
+  background: linear-gradient(90deg, #ecf5ff 0%, #ffffff 100%) !important;
+  color: #409EFF !important;
+  font-weight: 600;
+  position: relative;
+
+  .svg-icon { color: #409EFF; }
+
+  // 左侧的蓝色粗线条指示器
+  &::before {
+    content: '';
+    position: absolute;
+    left: -10px; // 贴紧最左侧
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 18px;
+    background-color: #409EFF;
+    border-radius: 0 4px 4px 0;
+  }
+}
+
+// 嵌套子菜单缩进调整
+.el-submenu .el-menu-item {
+  margin: 4px 10px 4px 20px; // 子菜单向右缩进多一点
+}

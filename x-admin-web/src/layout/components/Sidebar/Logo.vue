@@ -24,7 +24,8 @@ export default {
   },
   data() {
     return {
-      title: '个人健康管理系统',
+      title: '健康管理平台', // 可以改成你喜欢的系统名称
+      // 这里换了一个更有医疗/健康感觉的极简 Logo 占位图
       logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
     }
   }
@@ -44,32 +45,37 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
-  background: #2b2f3a;
+  height: 60px;
+  line-height: 60px;
+  background: #ffffff; // 纯白背景
   text-align: center;
   overflow: hidden;
+  border-bottom: 1px solid #f0f2f5; // 增加一条柔和的底部分割线
+  box-shadow: 0 1px 4px rgba(0,21,41,.03);
 
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
-      vertical-align: middle;
-      margin-right: 12px;
+      width: 28px;
+      height: 28px;
+      margin-right: 10px;
+      border-radius: 6px;
     }
 
     & .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
+      color: #303133; // 标题颜色变深
+      font-weight: 700;
+      font-size: 16px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
+      letter-spacing: 1px;
     }
   }
 
